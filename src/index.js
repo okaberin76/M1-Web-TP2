@@ -58,7 +58,7 @@ export class Data {
     } else if(values instanceof Array) {
       let result = values.filter(value => typeof value === 'number');
       if(result.length !== values.length) {
-        result = [];
+        throw new Error('The value(s) can only be a number or an array of numbers');
       }
       this.#values = result;
     } else {

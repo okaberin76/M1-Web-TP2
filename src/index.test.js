@@ -43,8 +43,13 @@ describe('Sensor model tests', () => {
     });
     test('Data: set() an array of String', () => {
       let expected = new Data(data[0].data.values);
-      expected.setValues = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      expect(expected.getValues).toEqual([]);
+      let array = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      expect(() => (expected.setValues = array)).toThrow('The value(s) can only be a number or an array of numbers');
+    });
+    test('Data: set() an array of numbers and String', () => {
+      let expected = new Data(data[0].data.values);
+      let array = [1, '2', '3', 4, '5', '6', '7', 8, '9'];
+      expect(() => (expected.setValues = array)).toThrow('The value(s) can only be a number or an array of numbers');
     });
   });
 });
