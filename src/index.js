@@ -1,6 +1,6 @@
 export const version = () => '1.0.0';
 
-const sensorType = Object.freeze(['TEMPERATURE', 'HUMIDITY', 'LIGHT', 'SWITCH', 'DOOR']);
+const sensorType = Object.freeze(['TEMPERATURE', 'HUMIDITY', 'LIGHT', 'SWITCH', 'DOOR', 'FAN_SPEED']);
 
 export class Sensor {
   #id;
@@ -53,7 +53,17 @@ export class Data {
   }
 
   set setValues(values) {
-    this.#values = values;
+    if(typeof values === 'number') {
+      this.#values = values;
+    } else if(values instanceof Array) {
+      let result = values.filter(value => typeof value === 'number');
+      if(result.length !== values.length) {
+        result = [];
+      }
+      this.#values = result;
+    } else {
+      throw new Error('The value(s) can only be a number or an array of numbers');
+    }
   }
 }
 
