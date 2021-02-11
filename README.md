@@ -1,4 +1,4 @@
-# Object Model Lab [![pipeline status](https://www-apps.univ-lehavre.fr/forge/2020-2021-M1/WEB-objectmodel-lab/badges/master/pipeline.svg)](https://www-apps.univ-lehavre.fr/forge/2020-2021-M1/WEB-objectmodel-lab/commits/master) [![coverage report](https://www-apps.univ-lehavre.fr/forge/2020-2021-M1/WEB-objectmodel-lab/badges/master/coverage.svg)](https://www-apps.univ-lehavre.fr/forge/2020-2021-M1/WEB-objectmodel-lab/commits/master)
+# Object Model Lab [![pipeline status](https://www-apps.univ-lehavre.fr/forge/bm142013/WEB-objectmodel-lab/badges/master/pipeline.svg)](https://www-apps.univ-lehavre.fr/forge/bm142013/WEB-objectmodel-lab/commits/master) [![coverage report](https://www-apps.univ-lehavre.fr/forge/bm142013/WEB-objectmodel-lab/badges/master/coverage.svg)](https://www-apps.univ-lehavre.fr/forge/bm142013/WEB-objectmodel-lab/commits/master)
 
 - Année : M1 IWOCS 2020-2021
 - Matière: WEB
@@ -8,7 +8,7 @@
 
 |Nom|Prénom|login|email|
 |--|--|--|--|
-| ... | ... | ... | ... |
+| Bourgeaux | Maxence | bm142013 | maxence.bourgeaux@etu.univ-lehavre.fr |
 
 See <https://pigne.org/teaching/webdev1/lab/object-model-lab> for instructions.
 
