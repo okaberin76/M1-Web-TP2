@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { version } from '.';
+import { version, Sensor, Data, DataLabels } from '.';
 
 let data;
 beforeAll(async () => {
@@ -19,6 +19,5 @@ describe('Sensor model tests', () => {
       expect(version()).toBe('1.0.0');
     });
   });
-  /* TODO: Écrire ici la suite de tests pour le modèle objet.*/
-  //
+
 });
