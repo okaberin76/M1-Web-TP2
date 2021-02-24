@@ -1,7 +1,7 @@
 export const version = () => '1.0.0';
 
 const Enum = require('enum');
-const sensorType = new Enum(['TEMPERATURE', 'HUMIDITY', 'LIGHT', 'SWITCH', 'DOOR', 'FAN_SPEED']);
+const sensorType = new Enum(['TEMPERATURE', 'HUMIDITY', 'LIGHT', 'SWITCH', 'DOOR', 'FAN_SPEED', 'PRESSURE']);
 
 export class Sensor {
   #id;
@@ -367,5 +367,38 @@ export class Light extends Sensor {
 
   get getAllState() {
     return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
+  }
+}
+
+export class Pressure extends Sensor {
+  #data;
+  #pressure;
+
+  constructor({id, name, type, data}, pressure) {
+    if(type !== sensorType.get('PRESSURE').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type, data);
+    this.#data = new TimeSeries(data);
+    this.#pressure = pressure;
+  }
+
+  get getPressure() {
+    return this.#pressure;
+  }
+
+  set setPressure(pressure) {
+    if(pressure < 0) {
+      throw new Error('Negative number !');
+    }
+    this.#pressure = pressure;
+  }
+
+  get getAllPressure() {
+    return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
+  }
+
+  get getAveragePressure() {
+    return Math.round(this.#data.getTSValues[this.#data.getTSValues.length - 1].values.reduce((a, b, i) => (a * i + b) / (i + 1)));
   }
 }

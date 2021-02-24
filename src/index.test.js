@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, Humidity, Light, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, Humidity, Light, Pressure, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -13,7 +13,7 @@ beforeAll(async () => {
 describe('Sensor model tests', () => {
   describe('Dummy tests', () => {
     test('data is loaded with 6 elements', () => {
-      expect(data.length).toBe(6);
+      expect(data.length).toBe(7);
     });
     test('version number from the model', () => {
       expect(version()).toBe('1.0.0');
@@ -340,6 +340,35 @@ describe('Sensor model tests', () => {
     });
     test('Light: getAllState', () => {
       expect(new Light(data[5], 0).getAllState).toEqual(data[5].data.values);
+    });
+  });
+
+  describe('Tests class Pressure', () => {
+    test('Pressure is initialized', () => {
+      let expected = new Pressure(data[6], 1600);
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Pressure.prototype);
+    });
+    test('Pressure is initialized with an incorrect type', () => {
+      expect(() => new Pressure(data[3], data[6].data.values)).toThrow('Bad type !');
+    });
+    test('Pressure: getPressure', () => {
+      expect(new Pressure(data[6], 1749).getPressure).toEqual(1749);
+    });
+    test('Pressure: setPressure', () => {
+      let expected = new Pressure(data[6], 454);
+      expected.setPressure = 1900;
+      expect(expected.getPressure).toEqual(1900);
+    });
+    test('Pressure: setPressure with an invalid number', () => {
+      let expected = new Pressure(data[6], 985);
+      expect(() => expected.setPressure = -1156).toThrow('Negative number !');
+    });
+    test('Pressure: getAveragePressure', () => {
+      expect(new Pressure(data[6], data[6].data.values).getAveragePressure).toEqual(1811);
+    });
+    test('Pressure: getAllPressure', () => {
+      expect(new Pressure(data[6], data[6].data.values).getAllPressure).toEqual(data[6].data.values);
     });
   });
 });
