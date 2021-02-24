@@ -18,6 +18,7 @@
       ]
     }
   },
+
   {
     "id": 10245,
     "name": "Porte du Garage",
@@ -36,6 +37,7 @@
       ]
     }
   },
+
   {
     "id": 2222,
     "name": "Ventilateur Ordinateur Bureau",
@@ -52,14 +54,7 @@
       ]
     }
   },
-  {
-    "id": 3456,
-    "name": "Lumière du bureau",
-    "type": "LIGHT",
-    "data": {
-      "value": 1
-    }
-  },
+
   {
     "id": 6789,
     "name": "Switch",
@@ -68,6 +63,16 @@
       "value": 0
     }
   },
+
+  {
+    "id": 3456,
+    "name": "Lumière du bureau",
+    "type": "LIGHT",
+    "data": {
+      "value": 1
+    }
+  },
+
   {
     "id": 6666,
     "name": "Humidité Bureau",

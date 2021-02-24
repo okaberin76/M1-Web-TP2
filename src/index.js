@@ -56,22 +56,22 @@ export class Data {
 }
 
 export class Datum extends Data {
-  #values
+  #value
 
-  constructor(values) {
+  constructor(value) {
     super();
-    this.#values = values;
+    this.#value = value;
   }
 
-  get getDatumValues() {
-    return this.#values;
+  get getDatumValue() {
+    return this.#value;
   }
 
-  set setDatumValues(values) {
-    if(typeof values !== 'number') {
+  set setDatumValue(value) {
+    if(typeof value !== 'number') {
       throw new Error('The value(s) can only be a number');
     }
-    this.#values = values;
+    this.#value = value;
   }
 }
 
@@ -249,6 +249,48 @@ export class Fan extends Sensor {
 
   get getAverageSpeed() {
     return Math.round(this.#data.getTSValues[this.#data.getTSValues.length - 1].values.reduce((a, b, i) => (a * i + b) / (i + 1)));
+  }
+}
+
+export class Switch extends Sensor {
+   #data;
+   #state;
+
+  SWITCH = {
+    ACTIVATED : 0,
+    DESACTIVATED : 1,
+  };
+
+  constructor(id, name, type, data, state) {
+    if(type !== sensorType.get('SWITCH').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type);
+    this.#data = new Datum(data);
+    this.#state = state;
+  }
+
+  get getState() {
+    return this.#state;
+  }
+
+  set setState(state) {
+    if(state < this.SWITCH.ACTIVATED || state > this.SWITCH.DESACTIVATED) {
+      throw new Error('The number for the state should be 0 or 1 !');
+    }
+    this.#state = state;
+  }
+
+  isActivated() {
+    return this.getState === this.SWITCH.ACTIVATED;
+  }
+
+  isDesactivated() {
+    return this.getState === this.SWITCH.DESACTIVATED;
+  }
+
+  get getAllState() {
+    return this.#data.getDatumValue.value;
   }
 
 }

@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -36,16 +36,16 @@ describe('Sensor model tests', () => {
     });
     test('Datum: get()', () => {
       let expected = new Datum(data[0].data.values);
-      expect(expected.getDatumValues).toEqual([23, 23, 22, 21, 23, 23, 23, 25, 25]);
+      expect(expected.getDatumValue).toEqual([23, 23, 22, 21, 23, 23, 23, 25, 25]);
     });
     test('Datum: set()', () => {
       let expected = new Datum(data[0].data.values);
-      expected.setDatumValues = 42;
-      expect(expected.getDatumValues).toEqual(42);
+      expected.setDatumValue = 42;
+      expect(expected.getDatumValue).toEqual(42);
     });
     test('Datum: set() a boolean', () => {
       let expected = new Datum(data[0].data.values);
-      expect(() => (expected.setDatumValues = true)).toThrow('The value(s) can only be a number');
+      expect(() => (expected.setDatumValue = true)).toThrow('The value(s) can only be a number');
     });
   });
 
@@ -211,17 +211,13 @@ describe('Sensor model tests', () => {
       let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
       expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
     });
-    test('Door: setState when state is not a valid number', () => {
-      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
-      expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
-    });
     test('Door: isOpen', () => {
       expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).isOpen()).toBe(true);
     });
     test('Door: isClose', () => {
       expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 1).isClose()).toEqual(true);
     });
-    test('Temperature: getAllState', () => {
+    test('Door: getAllState', () => {
       expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).getAllState).toEqual(data[1].data.values);
     });
   });
@@ -252,6 +248,38 @@ describe('Sensor model tests', () => {
     });
     test('Fan: getAllSpeed', () => {
       expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getAllSpeed).toEqual(data[2].data.values);
+    });
+  });
+
+  describe('Tests class Switch', () => {
+    test('Switch is initialized', () => {
+      let expected = new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0);
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Switch.prototype);
+    });
+    test('Switch is initialized with type = random', () => {
+      expect(() => new Switch(data[3].id, data[3].name, 'random', data[3].data, 0)).toThrow('Bad type !');
+    });
+    test('Switch: getState', () => {
+      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0).getState).toEqual(0);
+    });
+    test('Switch: setState', () => {
+      let expected = new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0);
+      expected.setState = 1;
+      expect(expected.getState).toEqual(1);
+    });
+    test('Switch: setState with an invalid number', () => {
+      let expected = new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0);
+      expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
+    });
+    test('Switch: isActivated', () => {
+      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0).isActivated()).toBe(true);
+    });
+    test('Switch: isDesactivated', () => {
+      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 1).isDesactivated()).toEqual(true);
+    });
+    test('Switch: getAllState', () => {
+      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0).getAllState).toEqual(data[3].data.value);
     });
   });
 });
