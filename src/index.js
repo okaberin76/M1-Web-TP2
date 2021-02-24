@@ -135,7 +135,7 @@ export class Temperature extends Sensor {
     FAHRENHEIT : 'Fahrenheit',
   };
 
-  constructor(id, name, type, data, unity) {
+  constructor({id, name, type, data}, unity) {
     if(type !== sensorType.get('TEMPERATURE').toString()) {
       throw new Error('Bad type !');
     }
@@ -186,7 +186,7 @@ export class Door extends Sensor {
     CLOSE : 1,
   };
 
-  constructor(id, name, type, data, state) {
+  constructor({id, name, type, data}, state) {
     if(type !== sensorType.get('DOOR').toString()) {
       throw new Error('Bad type !');
     }
@@ -223,7 +223,7 @@ export class Fan extends Sensor {
   #speed;
   #data;
 
-  constructor(id, name, type, data, speed) {
+  constructor({id, name, type, data}, speed) {
     if(type !== sensorType.get('FAN_SPEED').toString()) {
       throw new Error('Bad type !');
     }
@@ -261,7 +261,7 @@ export class Switch extends Sensor {
     DESACTIVATED : 1,
   };
 
-  constructor(id, name, type, data, state) {
+  constructor({id, name, type, data}, state) {
     if(type !== sensorType.get('SWITCH').toString()) {
       throw new Error('Bad type !');
     }
@@ -292,5 +292,38 @@ export class Switch extends Sensor {
   get getAllState() {
     return this.#data.getDatumValue.value;
   }
+}
 
+export class Humidity extends Sensor {
+  #percent
+  #data
+
+  constructor({id, name, type, data}, percent) {
+    if(type !== sensorType.get('HUMIDITY').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type, data);
+    this.#data = new TimeSeries(data);
+    this.#percent = percent;
+  }
+
+  get getPercentHumidity() {
+    return this.#percent;
+  }
+
+  set setPercentHumidity(percent) {
+    this.#percent = percent;
+  }
+
+  isHumid() {
+    return this.getPercentHumidity > 25.0;
+  }
+
+  get getAverageHumidity() {
+    return Math.round(this.#data.getTSValues[this.#data.getTSValues.length - 1].values.reduce((a, b, i) => (a * i + b) / (i + 1)));
+  }
+
+  get getAllHumidity() {
+    return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
+  }
 }

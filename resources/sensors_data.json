@@ -65,20 +65,18 @@
   },
 
   {
-    "id": 3456,
-    "name": "Lumière du bureau",
-    "type": "LIGHT",
-    "data": {
-      "value": 1
-    }
-  },
-
-  {
     "id": 6666,
     "name": "Humidité Bureau",
     "type": "HUMIDITY",
     "data": {
-      "values": [3, 7, 2, 14, 6, 1],
+      "values": [
+        3.4,
+        7.5,
+        2.03,
+        14.18,
+        6.2,
+        1.56
+      ],
       "labels": [
         "2021-01-19T10:00:00.000Z",
         "2021-01-20T11:0:00.000Z",
@@ -87,6 +85,15 @@
         "2021-01-23T20:20:00.000Z",
         "2021-01-24T14:25:00.000Z"
       ]
+    }
+  },
+
+  {
+    "id": 3456,
+    "name": "Lumière du bureau",
+    "type": "LIGHT",
+    "data": {
+      "value": 1
     }
   }
 ]

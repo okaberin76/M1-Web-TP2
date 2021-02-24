@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, Humidity, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -155,131 +155,159 @@ describe('Sensor model tests', () => {
 
   describe('Tests class Temperature', () => {
     test('Temperature is initialized', () => {
-      let expected = new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius');
+      let expected = new Temperature(data[0], 'Celsius');
       expect(expected).toBeDefined();
       expect(Object.getPrototypeOf(expected)).toBe(Temperature.prototype);
     });
     test('Temperature is initialized with type = DOOR', () => {
-      expect(() => new Temperature(data[0].id, data[0].name, 'DOOR', data[0].data, 'Celsius')).toThrow('Bad type !');
+      expect(() => new Temperature(data[1], 'Celsius')).toThrow('Bad type !');
     });
     test('Temperature: getUnity', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getUnity).toEqual('Celsius');
+      expect(new Temperature(data[0], 'Celsius').getUnity).toEqual('Celsius');
     });
     test('Temperature: setUnity', () => {
-      let expected = new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius');
+      let expected = new Temperature(data[0], 'Celsius');
       expected.setUnity = 'Fahrenheit';
       expect(expected.getUnity).toEqual('Fahrenheit');
     });
     test('Temperature: isCelsius', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').isCelsius()).toEqual(true);
+      expect(new Temperature(data[0], 'Celsius').isCelsius()).toEqual(true);
     });
     test('Temperature: isFahrenheit', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').isFahrenheit()).toEqual(false);
+      expect(new Temperature(data[0], 'Celsius').isFahrenheit()).toEqual(false);
     });
     test('Temperature: convertToCelsius', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Fahrenheit').convertToCelsius(100)).toEqual(38);
+      expect(new Temperature(data[0], 'Fahrenheit').convertToCelsius(100)).toEqual(38);
     });
     test('Temperature: convertToFahrenheit', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').convertToFahrenheit(38)).toEqual(100);
+      expect(new Temperature(data[0], 'Celsius').convertToFahrenheit(38)).toEqual(100);
     });
     test('Temperature: getAverageTemp', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getAverageTemp).toEqual(23);
+      expect(new Temperature(data[0], 'Celsius').getAverageTemp).toEqual(23);
     });
     test('Temperature: getAllTemp', () => {
-      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getAllTemp).toEqual(data[0].data.values);
+      expect(new Temperature(data[0], 'Celsius').getAllTemp).toEqual(data[0].data.values);
     });
   });
 
   describe('Tests class Door', () => {
     test('Door is initialized', () => {
-      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      let expected = new Door(data[1], 0);
       expect(expected).toBeDefined();
       expect(Object.getPrototypeOf(expected)).toBe(Door.prototype);
     });
-    test('Door is initialized with type = random', () => {
-      expect(() => new Door(data[1].id, data[1].name, 'random', data[1].data, 0)).toThrow('Bad type !');
+    test('Door is initialized with an incorrect type', () => {
+      expect(() => new Door(data[3], 0)).toThrow('Bad type !');
     });
     test('Door: getState', () => {
-      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).getState).toEqual(0);
+      expect(new Door(data[1], 0).getState).toEqual(0);
     });
     test('Door: setState', () => {
-      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      let expected = new Door(data[1], 0);
       expected.setState = 1;
       expect(expected.getState).toEqual(1);
     });
     test('Door: setState with an invalid number', () => {
-      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      let expected = new Door(data[1], 0);
       expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
     });
     test('Door: isOpen', () => {
-      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).isOpen()).toBe(true);
+      expect(new Door(data[1], 0).isOpen()).toBe(true);
     });
     test('Door: isClose', () => {
-      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 1).isClose()).toEqual(true);
+      expect(new Door(data[1], 1).isClose()).toEqual(true);
     });
     test('Door: getAllState', () => {
-      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).getAllState).toEqual(data[1].data.values);
+      expect(new Door(data[1], 0).getAllState).toEqual(data[1].data.values);
     });
   });
 
   describe('Tests class Fan', () => {
     test('Fan is initialized', () => {
-      let expected = new Fan(data[2].id, data[2].name, data[2].type, data[2].data, 1600);
+      let expected = new Fan(data[2], 1600);
       expect(expected).toBeDefined();
       expect(Object.getPrototypeOf(expected)).toBe(Fan.prototype);
     });
-    test('Fan is initialized with type = azerty', () => {
-      expect(() => new Fan(data[2].id, data[2].name, 'azerty', data[2].data, data[2].data.values)).toThrow('Bad type !');
+    test('Fan is initialized with an incorrect type', () => {
+      expect(() => new Fan(data[3], data[2].data.values)).toThrow('Bad type !');
     });
     test('Fan: getSpeed', () => {
-      expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getSpeed).toEqual(data[2].data.values);
+      expect(new Fan(data[2], 1749).getSpeed).toEqual(1749);
     });
     test('Fan: setSpeed', () => {
-      let expected = new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values);
+      let expected = new Fan(data[2], 1500);
       expected.setSpeed = 1400;
       expect(expected.getSpeed).toEqual(1400);
     });
     test('Fan: setSpeed with an invalid number', () => {
-      let expected = new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values);
+      let expected = new Fan(data[2], 1500);
       expect(() => expected.setSpeed = -10).toThrow('Negative number !');
     });
     test('Fan: getAverageSpeed', () => {
-      expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getAverageSpeed).toEqual(1775);
+      expect(new Fan(data[2], data[2].data.values).getAverageSpeed).toEqual(1775);
     });
     test('Fan: getAllSpeed', () => {
-      expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getAllSpeed).toEqual(data[2].data.values);
+      expect(new Fan(data[2], data[2].data.values).getAllSpeed).toEqual(data[2].data.values);
     });
   });
 
   describe('Tests class Switch', () => {
     test('Switch is initialized', () => {
-      let expected = new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0);
+      let expected = new Switch(data[3], 0);
       expect(expected).toBeDefined();
       expect(Object.getPrototypeOf(expected)).toBe(Switch.prototype);
     });
-    test('Switch is initialized with type = random', () => {
-      expect(() => new Switch(data[3].id, data[3].name, 'random', data[3].data, 0)).toThrow('Bad type !');
+    test('Switch is initialized with an incorrect type', () => {
+      expect(() => new Switch(data[5], 0)).toThrow('Bad type !');
     });
     test('Switch: getState', () => {
-      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0).getState).toEqual(0);
+      expect(new Switch(data[3], 0).getState).toEqual(0);
     });
     test('Switch: setState', () => {
-      let expected = new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0);
+      let expected = new Switch(data[3], 0);
       expected.setState = 1;
       expect(expected.getState).toEqual(1);
     });
     test('Switch: setState with an invalid number', () => {
-      let expected = new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0);
+      let expected = new Switch(data[3], 0);
       expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
     });
     test('Switch: isActivated', () => {
-      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0).isActivated()).toBe(true);
+      expect(new Switch(data[3], 0).isActivated()).toBe(true);
     });
     test('Switch: isDesactivated', () => {
-      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 1).isDesactivated()).toEqual(true);
+      expect(new Switch(data[3], 1).isDesactivated()).toEqual(true);
     });
     test('Switch: getAllState', () => {
-      expect(new Switch(data[3].id, data[3].name, data[3].type, data[3].data, 0).getAllState).toEqual(data[3].data.value);
+      expect(new Switch(data[3], data[3].data.value).getAllState).toEqual(data[3].data.value);
+    });
+  });
+
+  describe('Tests class Humidity', () => {
+    test('Humidity is initialized', () => {
+      let expected = new Humidity(data[4], 1.14);
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Humidity.prototype);
+    });
+    test('Humidity is initialized with an incorrect type', () => {
+      expect(() => new Humidity(data[0], 1.14)).toThrow('Bad type !');
+    });
+    test('Humidity: getPercentHumidity', () => {
+      expect(new Humidity(data[4], 1.14).getPercentHumidity).toEqual(1.14);
+    });
+    test('Humidity: setPercentHumidity', () => {
+      let expected = new Humidity(data[4], 1.14);
+      expected.setPercentHumidity = 25.7;
+      expect(expected.getPercentHumidity).toEqual(25.7);
+    });
+      test('Humidity: isHumid', () => {
+      expect(new Humidity(data[4], 28.74).isHumid()).toEqual(true);
+    });
+    test('Humidity: getAverageHumidity', () => {
+      expect(new Humidity(data[4], data[4].data.value).getAverageHumidity).toEqual(6);
+    });
+    test('Humidity: getAllHumidity', () => {
+      expect(new Humidity(data[4], data[4].data.value).getAllHumidity).toEqual(data[4].data.values);
     });
   });
 });
