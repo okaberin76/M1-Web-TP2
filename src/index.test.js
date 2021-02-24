@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -57,36 +57,36 @@ describe('Sensor model tests', () => {
     });
     test('TimeSeries: get()', () => {
       let expected = new TimeSeries(data[2].data.values);
-      expect(expected.getTimeSeriesValues).toEqual(data[2].data.values);
+      expect(expected.getTSValues).toEqual(data[2].data.values);
     });
     test('TimeSeries: get() without an array', () => {
       let expected = new TimeSeries(1);
-      expect(expected.getTimeSeriesValues).toEqual([1]);
+      expect(expected.getTSValues).toEqual([1]);
     });
     test('TimeSeries: set()', () => {
       let expected = new TimeSeries(0, 'test');
       let newData = {values : [1], labels : ['Setting some value with a label']};
-      expected.setTimeSeriesData = newData;
-      expect(expected.getTimeSeriesValues).toEqual(newData.values);
-      expect(expected.getTimeSeriesLabels).toEqual(newData.labels);
+      expected.setTSData = newData;
+      expect(expected.getTSValues).toEqual(newData.values);
+      expect(expected.getTSLabels).toEqual(newData.labels);
     });
     test('TimeSeries: set() without arrays', () => {
       let expected = new TimeSeries(0, 'test');
       let newData = {values : 1, labels : 'Setting some value with a label'};
-      expect(() => expected.setTimeSeriesData = newData).toThrow('The value(s) can only be an array of numbers');
+      expect(() => expected.setTSData = newData).toThrow('The value(s) can only be an array of numbers');
     });
     test('TimeSeries: setValues with an array of multiple type', () => {
       let expected = new TimeSeries(0, 'test');
       let newData = {values : [1, 'test', true, 5, 7]};
-      expect(() => expected.setTimeSeriesData = newData).toThrow('The value(s) can only be an array of numbers');
+      expect(() => expected.setTSData = newData).toThrow('The value(s) can only be an array of numbers');
     });
     test('TimeSeries: set() an array of values and a label', () => {
       let expected = new TimeSeries(data[2].data);
       let newValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       let newData = {values : newValues, labels : 'Setting some value with a label'};
-      expected.setTimeSeriesData = newData;
-      expect(expected.getTimeSeriesValues).toEqual(newData.values);
-      expect(expected.getTimeSeriesLabels).toEqual([newData.labels]);
+      expected.setTSData = newData;
+      expect(expected.getTSValues).toEqual(newData.values);
+      expect(expected.getTSLabels).toEqual([newData.labels]);
     });
     test('TimeSeries: set() an array of values and an array of label, both with the same length', () => {
       let expected = new TimeSeries(data[2].data);
@@ -96,14 +96,14 @@ describe('Sensor model tests', () => {
         newValues.push(i);
         newLabels.push('Label: ' + i);
       }
-      expected.setTimeSeriesData = {values: newValues, labels: newLabels};
-      expect(expected.getTimeSeriesValues).toEqual(newValues);
-      expect(expected.getTimeSeriesLabels).toEqual(newLabels);
+      expected.setTSData = {values: newValues, labels: newLabels};
+      expect(expected.getTSValues).toEqual(newValues);
+      expect(expected.getTSLabels).toEqual(newLabels);
     });
     test('TimeSeries: set() an array of values and an array of label, both with different length', () => {
       let expected = new TimeSeries(data[2].data);
       let newData = {values : [1, 2, 3, 4, 5, 6, 7, 8, 9], labels : ['A', 'B', 'C']};
-      expect(() => expected.setTimeSeriesData = newData).toThrow('Error of length ! Not the same amount of labels and values');
+      expect(() => expected.setTSData = newData).toThrow('Error of length ! Not the same amount of labels and values');
     });
   });
 
@@ -150,6 +150,43 @@ describe('Sensor model tests', () => {
         expected.setDataType = 46;
         expect(expected.getDataType).toEqual(46);
       });
+    });
+  });
+
+  describe('Tests class Temperature', () => {
+    test('Temperature is initialized', () => {
+      let expected = new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius');
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Temperature.prototype);
+    });
+    test('Temperature is initialized with type = DOOR', () => {
+      expect(() => new Temperature(data[0].id, data[0].name, 'DOOR', data[0].data, 'Celsius')).toThrow('Bad type !');
+    });
+    test('Temperature: getUnity', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getUnity).toEqual('Celsius');
+    });
+    test('Temperature: setUnity', () => {
+      let expected = new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius');
+      expected.setUnity = 'Fahrenheit';
+      expect(expected.getUnity).toEqual('Fahrenheit');
+    });
+    test('Temperature: isCelsius', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').isCelsius()).toEqual(true);
+    });
+    test('Temperature: isFahrenheit', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').isFahrenheit()).toEqual(false);
+    });
+    test('Temperature: convertToCelsius', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Fahrenheit').convertToCelsius(100)).toEqual(38);
+    });
+    test('Temperature: convertToFahrenheit', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').convertToFahrenheit(38)).toEqual(100);
+    });
+    test('Temperature: getAverageTemp', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getAverageTemp).toEqual(23);
+    });
+    test('Temperature: getAllTemp', () => {
+      expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getAllTemp).toEqual(data[0].data.values);
     });
   });
 });

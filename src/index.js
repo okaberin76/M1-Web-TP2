@@ -79,20 +79,20 @@ export class TimeSeries extends Data {
   #values
   #labels
 
-  constructor(values = [], labels = []) {
+  constructor(values, labels) {
     super();
     this.#values = values;
     this.#labels = labels;
   }
 
-  get getTimeSeriesValues() {
+  get getTSValues() {
     if(!(this.#values instanceof Array)) {
       this.#values = [this.#values];
     }
     return this.#values;
   }
 
-  set setTimeSeriesValues(values) {
+  set setTSValues(values) {
     if(values instanceof Array) {
       let result = values.filter(value => typeof value === 'number');
       if(result.length !== values.length) {
@@ -104,24 +104,75 @@ export class TimeSeries extends Data {
     }
   }
 
-  get getTimeSeriesLabels() {
+  get getTSLabels() {
     if(!(this.#labels instanceof Array)) {
       this.#labels = [this.#labels];
     }
     return this.#labels;
   }
 
-  set setTimeSeriesLabels(labels) {
+  set setTSLabels(labels) {
     this.#labels = labels;
   }
 
-  set setTimeSeriesData({values, labels}) {
+  set setTSData({values, labels}) {
     if(values instanceof Array && labels instanceof Array) {
       if(values.length !== labels.length) {
         throw new Error('Error of length ! Not the same amount of labels and values');
       }
     }
-    this.setTimeSeriesValues = values;
-    this.setTimeSeriesLabels = labels;
+    this.setTSValues = values;
+    this.setTSLabels = labels;
+  }
+}
+
+export class Temperature extends Sensor {
+  #unity
+  #data
+
+  TYPE = {
+    CELSIUS : 'Celsius',
+    FAHRENHEIT : 'Fahrenheit',
+  };
+
+  constructor(id, name, type, data, unity) {
+    if(type !== sensorType.get('TEMPERATURE').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type, data);
+    this.#data = new TimeSeries(data);
+    this.#unity = unity;
+  }
+
+  get getUnity() {
+    return this.#unity;
+  }
+
+  set setUnity(unity) {
+    this.#unity = unity;
+  }
+
+  isCelsius() {
+    return this.#unity === this.TYPE.CELSIUS;
+  }
+
+  isFahrenheit() {
+    return this.#unity === this.TYPE.FAHRENHEIT;
+  }
+
+  convertToCelsius(value) {
+    return Math.round((value - 32) * (5 / 9));
+  }
+
+  convertToFahrenheit(value) {
+    return Math.round((value * (9 / 5)) + 32);
+  }
+
+  get getAverageTemp() {
+    return Math.round(this.#data.getTSValues[this.#data.getTSValues.length - 1].values.reduce((a, b, i) => (a * i + b) / (i + 1)));
+  }
+
+  get getAllTemp() {
+    return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
   }
 }
