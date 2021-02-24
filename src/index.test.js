@@ -51,6 +51,10 @@ describe('Sensor model tests', () => {
       let array = [1, '2', '3', 4, '5', '6', '7', 8, '9'];
       expect(() => (expected.setValues = array)).toThrow('The value(s) can only be a number or an array of numbers');
     });
+    test('Data: set() a boolean', () => {
+      let expected = new Data(data[0].data.values);
+      expect(() => (expected.setValues = true)).toThrow('The value(s) can only be a number or an array of numbers');
+    });
   });
 
   describe('Tests class DataLabels', () => {
@@ -112,6 +116,9 @@ describe('Sensor model tests', () => {
       });
       test('Sensor: getName', () => {
         expect(new Sensor(data[1].id, data[1].name, data[1].type).getName).toEqual(data[1].name);
+      });
+      test('Sensor: getName that\'s not a String', () => {
+        expect(new Sensor(data[1].id, 500, data[1].type).getName).toEqual('500');
       });
       test('Sensor: getDataType', () => {
         expect(new Sensor(data[1].id, data[1].name, data[1].type).getDataType).toEqual(data[1].type);
