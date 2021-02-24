@@ -327,3 +327,45 @@ export class Humidity extends Sensor {
     return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
   }
 }
+
+export class Light extends Sensor {
+  #data;
+  #state;
+
+  LIGHT = {
+    ACTIVATED : 0,
+    DESACTIVATED : 1,
+  };
+
+  constructor({id, name, type, data}, state) {
+    if(type !== sensorType.get('LIGHT').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type);
+    this.#data = new TimeSeries(data);
+    this.#state = state;
+  }
+
+  get getState() {
+    return this.#state;
+  }
+
+  set setState(state) {
+    if(state < this.LIGHT.ACTIVATED || state > this.LIGHT.DESACTIVATED) {
+      throw new Error('The number for the state should be 0 or 1 !');
+    }
+    this.#state = state;
+  }
+
+  isActivated() {
+    return this.getState === this.LIGHT.ACTIVATED;
+  }
+
+  isDesactivated() {
+    return this.getState === this.LIGHT.DESACTIVATED;
+  }
+
+  get getAllState() {
+    return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
+  }
+}

@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, Humidity, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, Switch, Humidity, Light, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -308,6 +308,38 @@ describe('Sensor model tests', () => {
     });
     test('Humidity: getAllHumidity', () => {
       expect(new Humidity(data[4], data[4].data.value).getAllHumidity).toEqual(data[4].data.values);
+    });
+  });
+
+  describe('Tests class Light', () => {
+    test('Light is initialized', () => {
+      let expected = new Light(data[5], 0);
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Light.prototype);
+    });
+    test('Light is initialized with an incorrect type', () => {
+      expect(() => new Light(data[1], 0)).toThrow('Bad type !');
+    });
+    test('Light: getState', () => {
+      expect(new Light(data[5], 0).getState).toEqual(0);
+    });
+    test('Light: setState', () => {
+      let expected = new Light(data[5], 0);
+      expected.setState = 1;
+      expect(expected.getState).toEqual(1);
+    });
+    test('Light: setState with an invalid number', () => {
+      let expected = new Light(data[5], 0);
+      expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
+    });
+    test('Light: isOpen', () => {
+      expect(new Light(data[5], 0).isActivated()).toBe(true);
+    });
+    test('Light: isClose', () => {
+      expect(new Light(data[5], 1).isDesactivated()).toEqual(true);
+    });
+    test('Light: getAllState', () => {
+      expect(new Light(data[5], 0).getAllState).toEqual(data[5].data.values);
     });
   });
 });
