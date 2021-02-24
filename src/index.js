@@ -1,13 +1,14 @@
 export const version = () => '1.0.0';
 
-const sensorType = Object.freeze(['TEMPERATURE', 'HUMIDITY', 'LIGHT', 'SWITCH', 'DOOR', 'FAN_SPEED']);
+const Enum = require('enum');
+const sensorType = new Enum(['TEMPERATURE', 'HUMIDITY', 'LIGHT', 'SWITCH', 'DOOR', 'FAN_SPEED']);
 
 export class Sensor {
   #id;
   #name;
   #dataType;
 
-  constructor({ id, name, dataType }) {
+  constructor(id, name, dataType) {
     if (!(dataType in sensorType)) {
       throw new Error('Error ! The type of this sensor is unknown');
     }
@@ -21,10 +22,13 @@ export class Sensor {
   }
 
   get getName() {
+    if(typeof this.#name != 'string') {
+      this.#name = this.#name.toString();
+    }
     return this.#name;
   }
 
-  get dataType() {
+  get getDataType() {
     return this.#dataType;
   }
 
@@ -40,7 +44,7 @@ export class Sensor {
     this.#name = name;
   }
 
-  set dataType(data) {
+  set setDataType(data) {
     this.#dataType = data;
   }
 }

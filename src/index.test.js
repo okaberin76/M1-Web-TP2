@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, DataLabels, version } from '.';
+import { Data, DataLabels, Sensor, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -94,6 +94,49 @@ describe('Sensor model tests', () => {
       let expected = new DataLabels(data[2].data);
       let newData = {values : [1, 2, 3, 4, 5, 6, 7, 8, 9], labels : ['A', 'B', 'C']};
       expect(() => expected.setData = newData).toThrow('Error of length ! Not the same amount of labels and values');
+    });
+  });
+
+  describe('Tests class Sensor', () => {
+    test('DataSensor is initialized', () => {
+      let expected = new Sensor(12, 'test', 'DOOR');
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Sensor.prototype);
+    });
+    test('DataSensor is initialized with an unknown type', () => {
+      expect(() => new Sensor(12, 'test', '?')).toThrow('Error ! The type of this sensor is unknown');
+    });
+    describe('Sensor: get()', () => {
+      test('Sensor: getId', () => {
+        expect(new Sensor(data[1].id, data[1].name, data[1].type).getId).toEqual(data[1].id);
+      });
+      test('Sensor: getName', () => {
+        expect(new Sensor(data[1].id, data[1].name, data[1].type).getName).toEqual(data[1].name);
+      });
+      test('Sensor: getDataType', () => {
+        expect(new Sensor(data[1].id, data[1].name, data[1].type).getDataType).toEqual(data[1].type);
+      });
+    });
+    describe('Sensor: set()', () => {
+      test('Sensor: setId', () => {
+        let expected = new Sensor(data[1].id, data[1].name, data[1].type);
+        expected.setId = 3;
+        expect(expected.getId).toEqual(3);
+      });
+      test('Sensor: setId with something that\'s not a number', () => {
+        let expected = new Sensor(data[1].id, data[1].name, data[1].type);
+        expect(() => expected.setId = 'test').toThrow('The id can only be a number !');
+      });
+      test('Sensor: setName', () => {
+        let expected = new Sensor(data[1].id, data[1].name, data[1].type);
+        expected.setName = 'test';
+        expect(expected.getName).toEqual('test');
+      });
+      test('Sensor: setDataType', () => {
+        let expected = new Sensor(data[1].id, data[1].name, data[1].type);
+        expected.setDataType = 46;
+        expect(expected.getDataType).toEqual(46);
+      });
     });
   });
 });
