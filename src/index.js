@@ -50,54 +50,78 @@ export class Sensor {
 }
 
 export class Data {
-  #values
+  constructor() {
 
-  constructor(values) {
-    this.#values = values;
-  }
-
-  get getValues() {
-    return this.#values;
-  }
-
-  set setValues(values) {
-    if(typeof values === 'number') {
-      this.#values = values;
-    } else if(values instanceof Array) {
-      let result = values.filter(value => typeof value === 'number');
-      if(result.length !== values.length) {
-        throw new Error('The value(s) can only be a number or an array of numbers');
-      }
-      this.#values = result;
-    } else {
-      throw new Error('The value(s) can only be a number or an array of numbers');
-    }
   }
 }
 
-export class DataLabels extends Data {
+export class Datum extends Data {
+  #values
+
+  constructor(values) {
+    super();
+    this.#values = values;
+  }
+
+  get getDatumValues() {
+    return this.#values;
+  }
+
+  set setDatumValues(values) {
+    if(typeof values !== 'number') {
+      throw new Error('The value(s) can only be a number');
+    }
+    this.#values = values;
+  }
+}
+
+export class TimeSeries extends Data {
+  #values
   #labels
 
-  constructor(values, labels) {
-    super(values);
+  constructor(values = [], labels = []) {
+    super();
+    this.#values = values;
     this.#labels = labels;
   }
 
-  get getLabels() {
+  get getTimeSeriesValues() {
+    if(!(this.#values instanceof Array)) {
+      this.#values = [this.#values];
+    }
+    return this.#values;
+  }
+
+  set setTimeSeriesValues(values) {
+    if(values instanceof Array) {
+      let result = values.filter(value => typeof value === 'number');
+      if(result.length !== values.length) {
+        throw new Error('The value(s) can only be an array of numbers');
+      }
+      this.#values = result;
+    } else {
+      throw new Error('The value(s) can only be an array of numbers');
+    }
+  }
+
+  get getTimeSeriesLabels() {
+    if(!(this.#labels instanceof Array)) {
+      this.#labels = [this.#labels];
+    }
     return this.#labels;
   }
 
-  set setLabels(labels) {
+  set setTimeSeriesLabels(labels) {
     this.#labels = labels;
   }
 
-  set setData({values, labels}) {
+  set setTimeSeriesData({values, labels}) {
     if(values instanceof Array && labels instanceof Array) {
       if(values.length !== labels.length) {
         throw new Error('Error of length ! Not the same amount of labels and values');
       }
     }
-    this.setValues = values;
-    this.setLabels = labels;
+    this.setTimeSeriesValues = values;
+    this.setTimeSeriesLabels = labels;
   }
 }
