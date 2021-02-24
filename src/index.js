@@ -39,6 +39,10 @@ export class Sensor {
   set setName(name) {
     this.#name = name;
   }
+
+  set dataType(data) {
+    this.#dataType = data;
+  }
 }
 
 export class Data {
