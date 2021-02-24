@@ -153,11 +153,11 @@ export class Temperature extends Sensor {
   }
 
   isCelsius() {
-    return this.#unity === this.TYPE.CELSIUS;
+    return this.getUnity === this.TYPE.CELSIUS;
   }
 
   isFahrenheit() {
-    return this.#unity === this.TYPE.FAHRENHEIT;
+    return this.getUnity === this.TYPE.FAHRENHEIT;
   }
 
   convertToCelsius(value) {
@@ -173,6 +173,48 @@ export class Temperature extends Sensor {
   }
 
   get getAllTemp() {
+    return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
+  }
+}
+
+export class Door extends Sensor {
+  #state
+  #data
+
+  DOOR = {
+    OPEN : 0,
+    CLOSE : 1,
+  };
+
+  constructor(id, name, type, data, state) {
+    if(type !== sensorType.get('DOOR').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type);
+    this.#data = new TimeSeries(data);
+    this.#state = state;
+  }
+
+  get getState() {
+    return this.#state;
+  }
+
+  set setState(state) {
+    if(state < this.DOOR.OPEN || state > this.DOOR.CLOSE) {
+      throw new Error('The number for the state should be 0 or 1 !');
+    }
+    this.#state = state;
+  }
+
+  isOpen() {
+    return this.getState === this.DOOR.OPEN;
+  }
+
+  isClose() {
+    return this.getState === this.DOOR.CLOSE;
+  }
+
+  get getAllState() {
     return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
   }
 }

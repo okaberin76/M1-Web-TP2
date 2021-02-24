@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, Temperature, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, Door, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -187,6 +187,41 @@ describe('Sensor model tests', () => {
     });
     test('Temperature: getAllTemp', () => {
       expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getAllTemp).toEqual(data[0].data.values);
+    });
+  });
+  describe('Tests class Door', () => {
+    test('Door is initialized', () => {
+      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Door.prototype);
+    });
+    test('Temperature is initialized with type = random', () => {
+      expect(() => new Door(data[1].id, data[1].name, 'random', data[1].data, 0)).toThrow('Bad type !');
+    });
+    test('Door: getState', () => {
+      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).getState).toEqual(0);
+    });
+    test('Door: setState', () => {
+      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      expected.setState = 1;
+      expect(expected.getState).toEqual(1);
+    });
+    test('Door: setState with an invalid number', () => {
+      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
+    });
+    test('Door: setState when state is not a valid number', () => {
+      let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
+      expect(() => expected.setState = 5).toThrow('The number for the state should be 0 or 1 !');
+    });
+    test('Door: isOpen', () => {
+      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).isOpen()).toBe(true);
+    });
+    test('Door: isClose', () => {
+      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 1).isClose()).toEqual(true);
+    });
+    test('Temperature: getAllState', () => {
+      expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).getAllState).toEqual(data[1].data.values);
     });
   });
 });
