@@ -218,3 +218,37 @@ export class Door extends Sensor {
     return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
   }
 }
+
+export class Fan extends Sensor {
+  #speed;
+  #data;
+
+  constructor(id, name, type, data, speed) {
+    if(type !== sensorType.get('FAN_SPEED').toString()) {
+      throw new Error('Bad type !');
+    }
+    super(id, name, type);
+    this.#speed = speed;
+    this.#data = new TimeSeries(data);
+  }
+
+  get getSpeed() {
+    return this.#speed;
+  }
+
+  set setSpeed(speed) {
+    if(speed < 0) {
+      throw new Error('Negative number !');
+    }
+    this.#speed = speed;
+  }
+
+  get getAllSpeed() {
+    return this.#data.getTSValues[this.#data.getTSValues.length - 1].values;
+  }
+
+  get getAverageSpeed() {
+    return Math.round(this.#data.getTSValues[this.#data.getTSValues.length - 1].values.reduce((a, b, i) => (a * i + b) / (i + 1)));
+  }
+
+}

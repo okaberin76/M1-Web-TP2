@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 
-import { Data, Datum, TimeSeries, Sensor, Temperature, Door, version } from '.';
+import { Data, Datum, TimeSeries, Sensor, Temperature, Door, Fan, version } from '.';
 
 let data;
 beforeAll(async () => {
@@ -189,13 +189,14 @@ describe('Sensor model tests', () => {
       expect(new Temperature(data[0].id, data[0].name, data[0].type, data[0].data, 'Celsius').getAllTemp).toEqual(data[0].data.values);
     });
   });
+
   describe('Tests class Door', () => {
     test('Door is initialized', () => {
       let expected = new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0);
       expect(expected).toBeDefined();
       expect(Object.getPrototypeOf(expected)).toBe(Door.prototype);
     });
-    test('Temperature is initialized with type = random', () => {
+    test('Door is initialized with type = random', () => {
       expect(() => new Door(data[1].id, data[1].name, 'random', data[1].data, 0)).toThrow('Bad type !');
     });
     test('Door: getState', () => {
@@ -222,6 +223,35 @@ describe('Sensor model tests', () => {
     });
     test('Temperature: getAllState', () => {
       expect(new Door(data[1].id, data[1].name, data[1].type, data[1].data, 0).getAllState).toEqual(data[1].data.values);
+    });
+  });
+
+  describe('Tests class Fan', () => {
+    test('Fan is initialized', () => {
+      let expected = new Fan(data[2].id, data[2].name, data[2].type, data[2].data, 1600);
+      expect(expected).toBeDefined();
+      expect(Object.getPrototypeOf(expected)).toBe(Fan.prototype);
+    });
+    test('Fan is initialized with type = azerty', () => {
+      expect(() => new Fan(data[2].id, data[2].name, 'azerty', data[2].data, data[2].data.values)).toThrow('Bad type !');
+    });
+    test('Fan: getSpeed', () => {
+      expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getSpeed).toEqual(data[2].data.values);
+    });
+    test('Fan: setSpeed', () => {
+      let expected = new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values);
+      expected.setSpeed = 1400;
+      expect(expected.getSpeed).toEqual(1400);
+    });
+    test('Fan: setSpeed with an invalid number', () => {
+      let expected = new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values);
+      expect(() => expected.setSpeed = -10).toThrow('Negative number !');
+    });
+    test('Fan: getAverageSpeed', () => {
+      expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getAverageSpeed).toEqual(1775);
+    });
+    test('Fan: getAllSpeed', () => {
+      expect(new Fan(data[2].id, data[2].name, data[2].type, data[2].data, data[2].data.values).getAllSpeed).toEqual(data[2].data.values);
     });
   });
 });
